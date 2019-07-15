@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <link rel="stylesheet" href="styles/styles.css">
     <title>Gif Finder</title>
 </head>
+
 <body>
     <div class="wrapper">
         <header>
@@ -30,11 +32,117 @@
             </form>
         </header>
 
+        <!-- <div class="gif-box">
+            <div class="img-box">
+                <img src="https://media1.giphy.com/media/hmzAcor7gBsbK/giphy_s.gif?cid=c9e640955d2ce3454e45677441b7e49c&rid=giphy_s.gif"
+                    alt="">
+            </div>
+            <p class="gif-title">pizza GIF</p>
+        </div> -->
+
+        <!-- create a title  -->
+        <!-- <figure>
+            <img src="gif.images.original_still.url" alt="">
+            <figcaption>gif.titlle</figcaption>
+        </figure> -->
+
         <section class="results">
         </section>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script>
+
+        // 1. Get input value from user 
+        // 2. Make an API call 
+        // 3. With user input
+        // 4. Spit data back out on page
+
+        // This is my api key 
+        // const api_key = "YpFagsGXAj9EyhVByLrj2KdMuCTAVpwe"; 
+
+        const app = {};
+        app.key = "YpFagsGXAj9EyhVByLrj2KdMuCTAVpwe";
+
+        // array method to loop through every single item to spit them back out onto the page | spit data back out on the page 
+        app.displayGifs = (gifs) => {
+            // console.log("In display gifs:", gifs)
+            // loop over an array using for each 
+            // for each does | is a method available on your arrays you have to use it on an array 
+            // for each item in gifs do an array 
+            gifs.forEach(function (gif) {
+                // console.log("Inside of for each", gif);
+                // console.log("Gif title", gif.title);
+                // console.log("Gif image", gif.images.original_still.url);
+
+                const gifHtml = `<div class="gif-box">
+                            <div class="img-box">
+                                <img src="${gif.images.original_still.url}" alt="">
+                            </div>
+                            <p class="gif-title">${gif.title}</p>
+                        </div>
+                        `
+                // console.log(gifHtml);
+                $('.results').append(gifHtml);
+            })
+        }
+
+        //  we want to create a method similar to the bottom | using a function 
+        app.getGifs = (query) => {
+        // app.getGifs = () => {
+            // console.log("Getting Gifs...");
+            // console.log("Query in getGifs:", query);
+            // $.ajax returns a promise
+            $.ajax({
+                url: 'https://api.giphy.com/v1/gifs/search',
+                method: "GET",
+                dataType: "json",
+                // to add on additional parameters
+                data: {
+                    api_key: app.key,
+                    // q: "pizza"
+                    q: query
+                }
+            }).then(res => {
+                // console.log("result of getGifs", res);
+                // console.log("result of getGifs", res.data[0]);
+                // console.log("result of getGifs", res.data[0].images);
+                // console.log("result of getGifs", res.data[0].images.original_still);
+                // console.log("result of getGifs", res.data[0].images.original_still.url);
+                const gifArray = res.data;
+                // Once we have gifs, display gifs to page
+                app.displayGifs(gifArray);
+            });
+        }
+
+        // this is an initalize function for our app 
+        app.init = () => {
+            console.log("App initialized...");
+            
+            // listen for form submit
+            $(`form`).on('submit', function(event){
+                event.preventDefault(); 
+
+                // empty out results container with each search
+                $(`.results`).empty();
+
+                // console.log("form submitted...")
+                // attribute of type with a value of text 
+                // Get input value from user 
+                const userInput = $('input[type="text"]').val();
+                 // console.log(userInput);
+                 app.getGifs(userInput);
+            });
+            // app.getGifs();
+        };
+
+        // Document Ready | stuff you want to happen on page load 
+        $(() => {
+            console.log("Document ready...");
+            // initalize app 
+            app.init();
+        });
+
     </script>
 </body>
+
 </html>
